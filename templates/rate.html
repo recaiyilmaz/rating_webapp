@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rate Video</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+
+        video {
+            border: 2px solid #333;
+        }
+
+        .controls, .ratings {
+            margin-top: 15px;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .controls button {
+            background-color: #f0f0f0;
+        }
+
+        .ratings button {
+            background-color: #d3e0ea;
+        }
+
+        .ratings button:hover {
+            background-color: #a3c4dc;
+        }
+
+        .ratings button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Surgical Video Rating</h2>
+
+    <video id="videoPlayer" width="720" height="405">
+        <source src="{{ url_for('static', filename=video_file) }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Video Playback Controls -->
+    <div class="controls">
+        <button onclick="manualPlay()">▶️ Play</button>
+        <button onclick="pauseVideo()">⏸️ Pause</button>
+        <button onclick="replayVideo()">🔄 Replay</button>
+        <button onclick="setSpeed(2)">⏩ 2x</button>
+        <button onclick="setSpeed(4)">⏩⏩ 4x</button>
+        <button onclick="setSpeed(1)">🔁 1x</button>
+    </div>
+
+    <!-- Rating Buttons -->
+    <div class="ratings">
+        <form method="POST" action="/submit_rating" id="ratingForm">
+            <button name="rating" value="Excellent" disabled>Excellent</button>
+            <button name="rating" value="Very Good" disabled>Very Good</button>
+            <button name="rating" value="Good" disabled>Good</button>
+            <button name="rating" value="Average" disabled>Average</button>
+            <button name="rating" value="Below Average" disabled>Below Average</button>
+            <button name="rating" value="Poor" disabled>Poor</button>
+            <button name="rating" value="Very Poor" disabled>Very Poor</button>
+            <input type="hidden" name="time" id="ratingTime">
+        </form>
+    </div>
+
+    <script>
+        const video = document.getElementById("videoPlayer");
+        const ratingButtons = document.querySelectorAll(".ratings button");
+        const ratingForm = document.getElementById("ratingForm");
+        const ratingTimeInput = document.getElementById("ratingTime");
+
+        let segmentStart = 0;
+        let segmentDuration = 15;
+        let segmentEnd = segmentStart + segmentDuration;
+        let autoMode = true;
+
+        video.addEventListener("timeupdate", () => {
+            if (autoMode && video.currentTime >= segmentEnd) {
+                video.pause();
+                enableRatings();
+            }
+        });
+
+        function manualPlay() {
+            autoMode = false;
+            video.play();
+        }
+
+        function playSegment() {
+            autoMode = true;
+            segmentStart = video.currentTime;
+            segmentEnd = segmentStart + segmentDuration;
+            video.play();
+        }
+
+        function pauseVideo() {
+            video.pause();
+        }
+
+        function replayVideo() {
+            video.currentTime = 0;
+            segmentStart = 0;
+            segmentEnd = 15;
+            autoMode = true;
+            disableRatings();
+            video.play();
+        }
+
+        function setSpeed(speed) {
+            video.playbackRate = speed;
+        }
+
+        function enableRatings() {
+            ratingButtons.forEach(btn => btn.disabled = false);
+        }
+
+        function disableRatings() {
+            ratingButtons.forEach(btn => btn.disabled = true);
+        }
+
+        ratingForm.addEventListener("click", function (e) {
+            if (e.target.name === "rating") {
+                e.preventDefault(); // prevent form submission for demo
+                ratingTimeInput.value = Math.floor(segmentStart);
+                disableRatings();
+                playSegment(); // play the next 15 seconds
+            }
+        });
+
+        // Start the first segment when the page loads
+        window.onload = function () {
+            playSegment();
+        };
+    </script>
+</body>
+</html>
