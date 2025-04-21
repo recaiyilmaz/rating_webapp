@@ -46,7 +46,7 @@
 
     <h2>Surgical Video Rating</h2>
 
-    <video id="videoPlayer" width="720" height="405">
+    <video id="videoPlayer" width="960" height="540">
         <source src="{{ url_for('static', filename=video_file) }}" type="video/mp4">
         Your browser does not support the video tag.
     </video>
@@ -56,9 +56,9 @@
         <button onclick="manualPlay()">▶️ Play</button>
         <button onclick="pauseVideo()">⏸️ Pause</button>
         <button onclick="replayVideo()">🔄 Replay</button>
+        <button onclick="setSpeed(1)">▶️ 1x</button>
         <button onclick="setSpeed(2)">⏩ 2x</button>
-        <button onclick="setSpeed(4)">⏩⏩ 4x</button>
-        <button onclick="setSpeed(1)">🔁 1x</button>
+        <button onclick="setSpeed(4)">⏩⏩ 4x</button>        
     </div>
 
     <!-- Rating Buttons -->
