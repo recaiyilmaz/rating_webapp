@@ -55,7 +55,7 @@
     <div class="controls">
         <button onclick="manualPlay()">▶️ Play</button>
         <button onclick="pauseVideo()">⏸️ Pause</button>
-        <button onclick="replayVideo()">🔄 Replay</button>
+        <button onclick="replaySegment()">🔄 Replay 15s</button>
         <button onclick="setSpeed(1)">▶️ 1x</button>
         <button onclick="setSpeed(2)">⏩ 2x</button>
         <button onclick="setSpeed(4)">⏩⏩ 4x</button>        
@@ -81,8 +81,8 @@
         const ratingForm = document.getElementById("ratingForm");
         const ratingTimeInput = document.getElementById("ratingTime");
 
-        let segmentStart = 0;
         let segmentDuration = 15;
+        let segmentStart = 0;
         let segmentEnd = segmentStart + segmentDuration;
         let autoMode = true;
 
@@ -98,24 +98,21 @@
             video.play();
         }
 
-        function playSegment() {
+        function playSegment(startTime = video.currentTime) {
             autoMode = true;
-            segmentStart = video.currentTime;
+            segmentStart = Math.floor(startTime);
             segmentEnd = segmentStart + segmentDuration;
+            video.currentTime = segmentStart;
             video.play();
+        }
+
+        function replaySegment() {
+            disableRatings();
+            playSegment(segmentStart); // Replay the current 15s segment
         }
 
         function pauseVideo() {
             video.pause();
-        }
-
-        function replayVideo() {
-            video.currentTime = 0;
-            segmentStart = 0;
-            segmentEnd = 15;
-            autoMode = true;
-            disableRatings();
-            video.play();
         }
 
         function setSpeed(speed) {
@@ -132,16 +129,16 @@
 
         ratingForm.addEventListener("click", function (e) {
             if (e.target.name === "rating") {
-                e.preventDefault(); // prevent form submission for demo
-                ratingTimeInput.value = Math.floor(segmentStart);
+                e.preventDefault(); // prevent actual form submission here
+                ratingTimeInput.value = segmentStart;
+                ratingForm.submit(); // submit the form to save rating
                 disableRatings();
-                playSegment(); // play the next 15 seconds
+                playSegment(segmentEnd); // play the next segment
             }
         });
 
-        // Start the first segment when the page loads
         window.onload = function () {
-            playSegment();
+            playSegment(0); // Start the first segment
         };
     </script>
 </body>

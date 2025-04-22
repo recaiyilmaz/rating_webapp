@@ -15,13 +15,29 @@ app.secret_key = 'your_secret_key_here'
 # SET YOUR USERS AND FOLDERS
 # -----------------------------
 rater_credentials = {
-    'rater1': 'pass123',
-    'rater2': 'pass456',
+    'RECAI': 'RECAI',
+    'DEMO': 'DEMO',
+    'DONOHO': 'DONOHO',
+    'BAKHAIDAR': 'BAKHAIDAR',
+    'ALSAYEGH': 'ALSAYEGH',
+    'OBRIEN': 'OBRIEN',
+    'KHAN': 'KHAN',
+    'ALHANTOOBI': 'ALHANTOOBI',
+    'ALMANSOURI': 'ALMANSOURI',
+    'SMITH': 'SMITH'
 }
 
 rater_drive_folders = {
-    'rater1': '1zKnJZXAJX-ivShT0Hyhk_cgaVPXoTYXl',  # RATER 1 (RECAI)
-    'rater2': 'your_google_drive_folder_id_for_rater2',
+    'RECAI': '1zKnJZXAJX-ivShT0Hyhk_cgaVPXoTYXl',  # RATER 1 (RECAI)
+    'DEMO': '1mbOKAVMCekcsery6MkE-W9YBAamJZRI7',  # RATER 2 (DEMO)
+    'DONOHO': '1EXmHX_eYWNcRpYfMRaKbSNn3qtYXj4mF',  # RATER 3 (DONOHO)
+    'BAKHAIDAR': '1Hm45hI29P-_mCbf76LuEC9xfWRrlMwUY',  # RATER 4 (BAKHAIDAR)
+    'ALSAYEGH': '1d_o8UTelVuZGC-v0nohRoMHtGV2zkCmD',  # RATER 5 (ALSAYEGH)
+    'OBRIEN': '1ROw-cJ9YNFMuclxFuJKDzVzmGtpeYqtu',  # RATER 6 (O'BRIEN)
+    'KHAN': '1qLklpSpGuCvKu-3wtBtAfjPQ6f-cvWU4',  # RATER 7 (KHAN)
+    'ALHANTOOBI': '1Khk_0y_qBnYF8D7UQoU4s0dZjxZLNDHS',  # RATER 8 (ALHANTOOBI)
+    'ALMANSOURI': '1R6JUSyi1Pptf1a8zPBYDthjwr7BXOedx',  # RATER 9 (ALMANSOURI)
+    'SMITH': '1R8UfpiF33fuey-FVnjh-H3ABOebyQBBa'  # RATER 10 (SMITH)
 }
 
 # Load Google Drive API
@@ -136,7 +152,7 @@ def find_csv_file_in_drive(folder_id):
     results = drive_service.files().list(q=query, fields="files(id, name)").execute()
     files = results.get('files', [])
     for file in files:
-        if file['name'].startswith('drive_files_'):
+        if file['name'] == 'RaterFile.csv':
             return file
     return None
 
