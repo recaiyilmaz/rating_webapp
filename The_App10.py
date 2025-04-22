@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from googleapiclient.http import MediaIoBaseDownload
 import pandas as pd
-import os, io
+import os, io, csv
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from google.oauth2 import service_account
@@ -88,7 +88,7 @@ def rate_video():
         return f"No CSV found for user: {user}"
 
     # Download and read CSV
-    csv_path = f'static/{user}_video_list.csv'
+    csv_path = f'static/RaterFile.csv'
     download_file_from_drive(csv_file['id'], csv_path)
 
     df = pd.read_csv(csv_path)
@@ -100,7 +100,7 @@ def rate_video():
         return "All videos have been rated!"
 
     video_id = df['id'].iloc[index]
-    video_path = f'static/current_video_{user}.mp4'
+    video_path = f'static/current_video.mp4'
     download_file_from_drive(video_id, video_path)
 
     return render_template('rate.html', video_file=video_path.split('static/')[1])
@@ -109,27 +109,41 @@ def rate_video():
 # -----------------------------
 # SAVE RATING
 # -----------------------------
+from datetime import datetime
+
+
 @app.route('/submit_rating', methods=['POST'])
 def submit_rating():
-    if 'user' not in session:
-        return redirect(url_for('login'))
+    rating = request.form.get('rating')
+    segment_start = int(request.form.get('time'))
+    segment_end = segment_start + 15
+    column_name = str(segment_end)  # e.g., "15", "30", etc.
 
-    user = session['user']
-    rating = request.form['rating']
+    video_id = request.args.get('video')  # Adjust this if you use another ID scheme
+    rater_name = request.args.get('rater')  # Optional: if you're tracking multiple raters
 
-    # Load CSV
-    csv_path = f'static/{user}_video_list.csv'
-    df = pd.read_csv(csv_path)
-    index = int(df['where_we_left'].iloc[0])
+    filename = 'RaterFile.csv'
+    if os.path.exists(filename):
+        df = pd.read_csv(filename)
+    else:
+        df = pd.DataFrame()
 
-    # Save rating to a new column
-    if 'rating' not in df.columns:
-        df['rating'] = ''
-    df.at[index, 'rating'] = rating
-    df.at[0, 'where_we_left'] = index + 1
-    df.to_csv(csv_path, index=False)
+    # Identify the row (adjust logic if you use other keys)
+    row_key = f"{video_id}_{rater_name}"
+    if 'SessionID' not in df.columns:
+        df['SessionID'] = ''
 
-    return redirect(url_for('rate_video'))
+    if row_key not in df['SessionID'].values:
+        # Create a new row
+        new_row = {'SessionID': row_key, column_name: rating}
+        df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+    else:
+        # Update existing row
+        df.loc[df['SessionID'] == row_key, column_name] = rating
+
+    df.to_csv(filename, index=False)
+
+    return redirect(url_for('rate_video', video=video_id, rater=rater_name))
 
 
 # -----------------------------
