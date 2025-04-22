@@ -4,28 +4,43 @@
     <title>Rate Video</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f4f4;
             text-align: center;
-            padding: 20px;
+            padding: 40px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
         }
 
         video {
+            border-radius: 8px;
             border: 2px solid #333;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
-        .controls, .ratings {
-            margin-top: 15px;
+        .controls, .ratings, .info-bar, .category-ratings {
+            margin-top: 20px;
         }
 
         button {
-            padding: 10px 15px;
-            margin: 5px;
-            font-size: 16px;
+            padding: 8px 14px;
+            margin: 6px 4px;
+            font-size: 14px;
+            border-radius: 6px;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: background 0.3s ease;
             cursor: pointer;
         }
 
         .controls button {
             background-color: #f0f0f0;
+        }
+
+        .controls button:hover {
+            background-color: #e0e0e0;
         }
 
         .ratings button {
@@ -40,6 +55,45 @@
             background-color: #ccc;
             cursor: not-allowed;
         }
+
+        .info-bar {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .info-bar span {
+            color: #007bff;
+        }
+
+        .category-ratings {
+            text-align: left;
+            max-width: 1000px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .category {
+            margin-bottom: 25px;
+        }
+
+        .category-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .submit-button {
+            margin-top: 30px;
+            background-color: #007bff;
+            color: white;
+        }
+
+        .submit-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -51,14 +105,19 @@
         Your browser does not support the video tag.
     </video>
 
-    <!-- Video Playback Controls -->
+    <div class="info-bar">
+        Rating Interval: <span id="intervalDisplay">0 - 15</span> seconds |
+        Time Left: <span id="countdown">...</span> seconds
+    </div>
+
+    <!-- Playback Controls -->
     <div class="controls">
         <button onclick="manualPlay()">▶️ Play</button>
         <button onclick="pauseVideo()">⏸️ Pause</button>
-        <button onclick="replaySegment()">🔄 Replay 15s</button>
+        <button onclick="replaySegment()">🔄 Replay Last 15s</button>
         <button onclick="setSpeed(1)">▶️ 1x</button>
         <button onclick="setSpeed(2)">⏩ 2x</button>
-        <button onclick="setSpeed(4)">⏩⏩ 4x</button>        
+        <button onclick="setSpeed(4)">⏩⏩ 4x</button>
     </div>
 
     <!-- Rating Buttons -->
@@ -75,22 +134,46 @@
         </form>
     </div>
 
+    <!-- Category Ratings Buttons -->
+    <form method="POST" action="/submit_final_ratings" class="category-ratings" id="finalRatingsForm">
+        <h3>Final Ratings</h3>
+        {% for category in ['Respect for Tissue', 'Hemostasis', 'Instrument Handling', 'Economy of Movement', 'Flow', 'Overall'] %}
+            <div class="category">
+                <div class="category-title">{{ category }}</div>
+                {% for rating in ['Excellent', 'Very Good', 'Good', 'Average', 'Below Average', 'Poor', 'Very Poor'] %}
+                    <button type="submit" name="{{ category|replace(' ', '_') }}" value="{{ rating }}" class="category-button" disabled>{{ rating }}</button>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </form>
+
     <script>
         const video = document.getElementById("videoPlayer");
         const ratingButtons = document.querySelectorAll(".ratings button");
         const ratingForm = document.getElementById("ratingForm");
         const ratingTimeInput = document.getElementById("ratingTime");
+        const intervalDisplay = document.getElementById("intervalDisplay");
+        const countdownTimer = document.getElementById("countdown");
 
-        let segmentDuration = 15;
+        const categoryButtons = document.querySelectorAll(".category-button");
+
         let segmentStart = 0;
+        const segmentDuration = 15;
         let segmentEnd = segmentStart + segmentDuration;
         let autoMode = true;
 
         video.addEventListener("timeupdate", () => {
+            const timeLeft = Math.max(0, Math.ceil(video.duration - video.currentTime));
+            countdownTimer.textContent = timeLeft;
+
             if (autoMode && video.currentTime >= segmentEnd) {
                 video.pause();
                 enableRatings();
             }
+        });
+
+        video.addEventListener("ended", () => {
+            enableCategoryRatings();
         });
 
         function manualPlay() {
@@ -98,21 +181,23 @@
             video.play();
         }
 
-        function playSegment(startTime = video.currentTime) {
+        function playSegment() {
             autoMode = true;
-            segmentStart = Math.floor(startTime);
+            segmentStart = video.currentTime;
             segmentEnd = segmentStart + segmentDuration;
-            video.currentTime = segmentStart;
-            video.play();
-        }
-
-        function replaySegment() {
+            updateIntervalDisplay();
             disableRatings();
-            playSegment(segmentStart); // Replay the current 15s segment
+            video.play();
         }
 
         function pauseVideo() {
             video.pause();
+        }
+
+        function replaySegment() {
+            video.currentTime = segmentStart;
+            disableRatings();
+            video.play();
         }
 
         function setSpeed(speed) {
@@ -127,18 +212,26 @@
             ratingButtons.forEach(btn => btn.disabled = true);
         }
 
+        function enableCategoryRatings() {
+            categoryButtons.forEach(btn => btn.disabled = false);
+        }
+
+        function updateIntervalDisplay() {
+            intervalDisplay.textContent = `${Math.floor(segmentStart)} - ${Math.floor(segmentEnd)}`;
+        }
+
         ratingForm.addEventListener("click", function (e) {
             if (e.target.name === "rating") {
-                e.preventDefault(); // prevent actual form submission here
-                ratingTimeInput.value = segmentStart;
-                ratingForm.submit(); // submit the form to save rating
+                e.preventDefault();
+                ratingTimeInput.value = Math.floor(segmentStart);
                 disableRatings();
-                playSegment(segmentEnd); // play the next segment
+                playSegment();
             }
         });
 
+        // Start the first segment on load
         window.onload = function () {
-            playSegment(0); // Start the first segment
+            playSegment();
         };
     </script>
 </body>
