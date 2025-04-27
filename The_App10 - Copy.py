@@ -41,6 +41,7 @@ rater_drive_folders = {
 }
 
 # Load Google Drive API
+
 # ACCESS TO GOOGLE CREDENTIALS
 credentials_share_link = 'https://drive.google.com/file/d/180TACdy1uZuFwmAUCtNFJxcW9rvK1Qa2/view?usp=sharing'
 credentials_id = credentials_share_link.split('/')[5]
@@ -104,16 +105,47 @@ def rate_video():
 
     return render_template('rate.html', video_file=video_path.split('static/')[1])
 
+
 # -----------------------------
 # SAVE RATING
 # -----------------------------
-@app.route('/submit_ratings', methods=['POST'])
-def submit_ratings():
-    # Get the ratings data from the form
-    ratings = request.form.get('all_ratings')
-    print(ratings)
+from datetime import datetime
 
-    return "All ratings saved successfully!"
+
+@app.route('/submit_rating', methods=['POST'])
+def submit_rating():
+    rating = request.form.get('rating')
+    print(f"Received Rating: {rating}")
+    segment_start = int(request.form.get('time'))
+    segment_end = segment_start + 15
+    column_name = str(segment_end)  # e.g., "15", "30", etc.
+
+    video_id = request.args.get('video')  # Adjust this if you use another ID scheme
+    rater_name = request.args.get('rater')  # Optional: if you're tracking multiple raters
+
+    filename = 'RaterFile.csv'
+    if os.path.exists(filename):
+        df = pd.read_csv(filename)
+    else:
+        df = pd.DataFrame()
+
+    # Identify the row (adjust logic if you use other keys)
+    row_key = f"{video_id}_{rater_name}"
+    if 'SessionID' not in df.columns:
+        df['SessionID'] = ''
+
+    if row_key not in df['SessionID'].values:
+        # Create a new row
+        new_row = {'SessionID': row_key, column_name: rating}
+        df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+    else:
+        # Update existing row
+        df.loc[df['SessionID'] == row_key, column_name] = rating
+
+    df.to_csv(filename, index=False)
+
+    return redirect(url_for('rate_video', video=video_id, rater=rater_name))
+
 
 # -----------------------------
 # DOWNLOAD FILE FROM DRIVE
@@ -126,6 +158,7 @@ def download_file_from_drive(file_id, dest_path):
     while done is False:
         status, done = downloader.next_chunk()
 
+
 # -----------------------------
 # FIND CSV FILE IN DRIVE FOLDER
 # -----------------------------
@@ -137,6 +170,7 @@ def find_csv_file_in_drive(folder_id):
         if file['name'] == 'RaterFile.csv':
             return file
     return None
+
 
 if __name__ == '__main__':
     app.run(debug=True)

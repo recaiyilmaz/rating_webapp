@@ -115,15 +115,15 @@
             background-color: #e0e0e0;
         }
 
-        .ratings button, .category-rating-buttons button {
+        .ratings button {
             background-color: #d3e0ea;
         }
 
-        .ratings button:hover, .category-rating-buttons button:hover {
+        .ratings button:hover {
             background-color: #a3c4dc;
         }
 
-        .ratings button:disabled, .category-rating-buttons button:disabled {
+        .ratings button:disabled {
             background-color: #ccc;
             cursor: not-allowed;
         }
@@ -175,7 +175,7 @@
             background-color: #f2f2f2;
         }
 
-        #submitAllButton, #submitCategoryButton {
+        #submitAllButton {
             background-color: #28a745;
             color: white;
             font-size: 16px;
@@ -184,60 +184,13 @@
             cursor: pointer;
         }
 
-        #submitAllButton:hover, #submitCategoryButton:hover {
+        #submitAllButton:hover {
             background-color: #218838;
         }
 
-        #submitAllButton:disabled, #submitCategoryButton:disabled {
+        #submitAllButton:disabled {
             background-color: #6c757d;
             cursor: not-allowed;
-        }
-
-        .category-section {
-            margin-top: 30px;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            display: none;
-        }
-
-        .category-section h3 {
-            text-align: center;
-            margin-top: 0;
-            margin-bottom: 20px;
-        }
-
-        .category-row {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 15px;
-        }
-
-        .category-label {
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-
-        .category-rating-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .selected-rating {
-            background-color: #4c8bf5 !important;
-            color: white;
-        }
-
-        .category-summary {
-            margin-top: 20px;
-            text-align: left;
         }
     </style>
 </head>
@@ -308,115 +261,9 @@
         <button id="submitAllButton" disabled>Submit All Ratings</button>
     </div>
 
-    <!-- Category Ratings Section (Initially Hidden) -->
-    <div class="category-section" id="categorySection">
-        <h3>Category Ratings</h3>
-        <p>Please rate the video in the following six categories:</p>
-        
-        <!-- Respect for Tissue Category -->
-        <div class="category-row">
-            <div class="category-label">Respect for Tissue</div>
-            <div class="category-rating-buttons" data-category="RespectForTissue">
-                <button type="button" class="category-btn" data-value="Excellent">Excellent</button>
-                <button type="button" class="category-btn" data-value="Very Good">Very Good</button>
-                <button type="button" class="category-btn" data-value="Good">Good</button>
-                <button type="button" class="category-btn" data-value="Average">Average</button>
-                <button type="button" class="category-btn" data-value="Below Average">Below Average</button>
-                <button type="button" class="category-btn" data-value="Poor">Poor</button>
-                <button type="button" class="category-btn" data-value="Very Poor">Very Poor</button>
-            </div>
-        </div>
-        
-        <!-- Hemostasis Category -->
-        <div class="category-row">
-            <div class="category-label">Hemostasis</div>
-            <div class="category-rating-buttons" data-category="Hemostasis">
-                <button type="button" class="category-btn" data-value="Excellent">Excellent</button>
-                <button type="button" class="category-btn" data-value="Very Good">Very Good</button>
-                <button type="button" class="category-btn" data-value="Good">Good</button>
-                <button type="button" class="category-btn" data-value="Average">Average</button>
-                <button type="button" class="category-btn" data-value="Below Average">Below Average</button>
-                <button type="button" class="category-btn" data-value="Poor">Poor</button>
-                <button type="button" class="category-btn" data-value="Very Poor">Very Poor</button>
-            </div>
-        </div>
-        
-        <!-- Instrument Handling Category -->
-        <div class="category-row">
-            <div class="category-label">Instrument Handling</div>
-            <div class="category-rating-buttons" data-category="InstrumentHandling">
-                <button type="button" class="category-btn" data-value="Excellent">Excellent</button>
-                <button type="button" class="category-btn" data-value="Very Good">Very Good</button>
-                <button type="button" class="category-btn" data-value="Good">Good</button>
-                <button type="button" class="category-btn" data-value="Average">Average</button>
-                <button type="button" class="category-btn" data-value="Below Average">Below Average</button>
-                <button type="button" class="category-btn" data-value="Poor">Poor</button>
-                <button type="button" class="category-btn" data-value="Very Poor">Very Poor</button>
-            </div>
-        </div>
-        
-        <!-- Economy of Movement Category -->
-        <div class="category-row">
-            <div class="category-label">Economy of Movement</div>
-            <div class="category-rating-buttons" data-category="EconomyOfMovement">
-                <button type="button" class="category-btn" data-value="Excellent">Excellent</button>
-                <button type="button" class="category-btn" data-value="Very Good">Very Good</button>
-                <button type="button" class="category-btn" data-value="Good">Good</button>
-                <button type="button" class="category-btn" data-value="Average">Average</button>
-                <button type="button" class="category-btn" data-value="Below Average">Below Average</button>
-                <button type="button" class="category-btn" data-value="Poor">Poor</button>
-                <button type="button" class="category-btn" data-value="Very Poor">Very Poor</button>
-            </div>
-        </div>
-        
-        <!-- Flow Category -->
-        <div class="category-row">
-            <div class="category-label">Flow</div>
-            <div class="category-rating-buttons" data-category="Flow">
-                <button type="button" class="category-btn" data-value="Excellent">Excellent</button>
-                <button type="button" class="category-btn" data-value="Very Good">Very Good</button>
-                <button type="button" class="category-btn" data-value="Good">Good</button>
-                <button type="button" class="category-btn" data-value="Average">Average</button>
-                <button type="button" class="category-btn" data-value="Below Average">Below Average</button>
-                <button type="button" class="category-btn" data-value="Poor">Poor</button>
-                <button type="button" class="category-btn" data-value="Very Poor">Very Poor</button>
-            </div>
-        </div>
-        
-        <!-- Overall Category -->
-        <div class="category-row">
-            <div class="category-label">Overall</div>
-            <div class="category-rating-buttons" data-category="Overall">
-                <button type="button" class="category-btn" data-value="Excellent">Excellent</button>
-                <button type="button" class="category-btn" data-value="Very Good">Very Good</button>
-                <button type="button" class="category-btn" data-value="Good">Good</button>
-                <button type="button" class="category-btn" data-value="Average">Average</button>
-                <button type="button" class="category-btn" data-value="Below Average">Below Average</button>
-                <button type="button" class="category-btn" data-value="Poor">Poor</button>
-                <button type="button" class="category-btn" data-value="Very Poor">Very Poor</button>
-            </div>
-        </div>
-        
-        <!-- Category Ratings Summary -->
-        <div class="category-summary">
-            <h4>Your Category Ratings:</h4>
-            <div id="categorySummary">
-                <!-- Will be filled with selected category ratings -->
-                <p>No categories rated yet.</p>
-            </div>
-        </div>
-        
-        <!-- Submit Category Ratings Button -->
-        <button id="submitCategoryButton" disabled>Submit All Category Ratings</button>
-    </div>
-
-    <!-- Hidden forms for submission -->
+    <!-- Hidden form for submission -->
     <form id="submitForm" method="POST" action="/submit_ratings" style="display: none;">
         <input type="hidden" name="all_ratings" id="allRatingsInput">
-    </form>
-    
-    <form id="submitCategoryForm" method="POST" action="/submit_category_ratings" style="display: none;">
-        <input type="hidden" name="category_ratings" id="categoryRatingsInput">
     </form>
 
 <script>
@@ -439,14 +286,6 @@
     const tutorialContainer = document.getElementById("tutorialContainer");
     const tutorialVideo = document.getElementById("tutorialVideo");
     const closeTutorial = document.getElementById("closeTutorial");
-    
-    // Category rating elements
-    const categorySection = document.getElementById("categorySection");
-    const categoryButtons = document.querySelectorAll(".category-btn");
-    const categorySummary = document.getElementById("categorySummary");
-    const submitCategoryButton = document.getElementById("submitCategoryButton");
-    const submitCategoryForm = document.getElementById("submitCategoryForm");
-    const categoryRatingsInput = document.getElementById("categoryRatingsInput");
 
     // Define default rating time points (in seconds)
     // Will be adjusted based on video duration
@@ -457,7 +296,6 @@
     let userRatings = {};
     let ratingRowElements = {}; // Store references to rating row elements
     let isLastRating = false; // Flag to track if we're on the last rating
-    let categoryRatings = {}; // Store category ratings
 
     // Initialize when video is ready
     video.addEventListener('loadedmetadata', () => {
@@ -636,8 +474,6 @@
             
             // Store the rating with timestamp
             userRatings[intervalKey] = {
-                startTime: segmentStart,
-                endTime: segmentEnd,
                 rating: rating,
                 timestamp: new Date().toISOString()
             };
@@ -700,110 +536,8 @@
         // Prepare the data for submission
         allRatingsInput.value = JSON.stringify(userRatings);
         
-        // Show category ratings section
-        categorySection.style.display = "block";
-        
-        // Scroll to category section
-        categorySection.scrollIntoView({ behavior: 'smooth' });
-        
-        // Disable this button to prevent multiple submissions
-        submitAllButton.disabled = true;
-    });
-    
-    // Handle category button clicks
-    categoryButtons.forEach(button => {
-        button.addEventListener("click", function() {
-            const rating = this.getAttribute("data-value");
-            const categoryContainer = this.parentElement;
-            const category = categoryContainer.getAttribute("data-category");
-            
-            // Remove selected class from all buttons in this category
-            categoryContainer.querySelectorAll('.category-btn').forEach(btn => {
-                btn.classList.remove('selected-rating');
-            });
-            
-            // Add selected class to clicked button
-            this.classList.add('selected-rating');
-            
-            // Store the category rating
-            categoryRatings[category] = rating;
-            
-            // Update the summary
-            updateCategorySummary();
-            
-            // Check if all categories are rated
-            checkAllCategoriesRated();
-        });
-    });
-    
-    // Update category summary display
-    function updateCategorySummary() {
-        const categories = Object.keys(categoryRatings);
-        
-        if (categories.length === 0) {
-            categorySummary.innerHTML = "<p>No categories rated yet.</p>";
-            return;
-        }
-        
-        let summaryHTML = "<ul>";
-        for (const category of categories) {
-            // Convert camelCase to spaced words
-            const formattedCategory = category
-                .replace(/([A-Z])/g, ' $1')
-                .replace(/^./, str => str.toUpperCase());
-                
-            summaryHTML += `<li><strong>${formattedCategory}:</strong> ${categoryRatings[category]}</li>`;
-        }
-        summaryHTML += "</ul>";
-        
-        categorySummary.innerHTML = summaryHTML;
-    }
-    
-    // Check if all categories have been rated
-    function checkAllCategoriesRated() {
-        const allCategories = [
-            "RespectForTissue", 
-            "Hemostasis", 
-            "InstrumentHandling", 
-            "EconomyOfMovement", 
-            "Flow", 
-            "Overall"
-        ];
-        
-        const allRated = allCategories.every(category => categoryRatings[category]);
-        submitCategoryButton.disabled = !allRated;
-    }
-    
-    // Submit category ratings
-    submitCategoryButton.addEventListener("click", function() {
-        // Check if all categories are rated
-        const allCategories = [
-            "RespectForTissue", 
-            "Hemostasis", 
-            "InstrumentHandling", 
-            "EconomyOfMovement", 
-            "Flow", 
-            "Overall"
-        ];
-        
-        const allRated = allCategories.every(category => categoryRatings[category]);
-        
-        if (!allRated) {
-            alert("Please rate all six categories before submitting.");
-            return;
-        }
-        
-        // Add timestamp to category ratings
-        const submissionData = {
-            categoryRatings: categoryRatings,
-            timestamp: new Date().toISOString()
-        };
-        
-        // Prepare the data for submission
-        categoryRatingsInput.value = JSON.stringify(submissionData);
-        
         // Submit the form
-        submitCategoryForm.submit();
+        submitForm.submit();
     });
 </script>
 </body>

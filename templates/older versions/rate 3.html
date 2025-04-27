@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rate Video</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 40px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        video {
+            border-radius: 8px;
+            border: 2px solid #333;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .controls, .ratings, .info-bar, .category-ratings {
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 8px 14px;
+            margin: 6px 4px;
+            font-size: 14px;
+            border-radius: 6px;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: background 0.3s ease;
+            cursor: pointer;
+        }
+
+        .controls button {
+            background-color: #f0f0f0;
+        }
+
+        .controls button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .ratings button {
+            background-color: #d3e0ea;
+        }
+
+        .ratings button:hover {
+            background-color: #a3c4dc;
+        }
+
+        .ratings button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .info-bar {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .info-bar span {
+            color: #007bff;
+        }
+
+        .category-ratings {
+            text-align: left;
+            max-width: 1000px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .category {
+            margin-bottom: 25px;
+        }
+
+        .category-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .submit-button {
+            margin-top: 30px;
+            background-color: #007bff;
+            color: white;
+        }
+
+        .submit-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Surgical Video Rating</h2>
+
+    <video id="videoPlayer" width="960" height="540">
+        <source src="{{ url_for('static', filename=video_file) }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <div class="info-bar">
+        Rating Interval: <span id="intervalDisplay">0 - 15</span> seconds |
+        Time Left: <span id="countdown">...</span> seconds
+    </div>
+
+    <!-- Playback Controls -->
+    <div class="controls">
+        <button onclick="manualPlay()">▶️ Play</button>
+        <button onclick="pauseVideo()">⏸️ Pause</button>
+        <button onclick="replaySegment()">🔄 Replay Last 15s</button>
+        <button onclick="setSpeed(1)">▶️ 1x</button>
+        <button onclick="setSpeed(2)">⏩ 2x</button>
+        <button onclick="setSpeed(4)">⏩⏩ 4x</button>
+    </div>
+
+    <!-- Rating Buttons -->
+    <div class="ratings">
+        <form method="POST" action="/submit_rating" id="ratingForm">
+            <button type="submit" onclick="setData(this)" disabled>Excellent</button>
+            <button type="submit" onclick="setData(this)" disabled>Very Good</button>
+            <button type="submit" onclick="setData(this)" disabled>Good</button>
+            <button type="submit" onclick="setData(this)" disabled>Average</button>
+            <button type="submit" onclick="setData(this)" disabled>Below Average</button>
+            <button type="submit" onclick="setData(this)" disabled>Poor</button>
+            <button type="submit" onclick="setData(this)" disabled>Very Poor</button>
+
+            <input type="hidden" name="time" id="videoTime">
+            <input type="hidden" name="timestamp" id="timestamp">
+            <input type="hidden" name="button_label" id="buttonLabel">
+            <input type="hidden" name="videoid" id="videoid" value="{{ videoid }}">
+            <input type="hidden" name="rater_name" id="raterName" value="{{ rater_name }}">
+
+        </form>
+    </div>
+
+    <script>
+        function setData(button) {
+            const now = new Date().toISOString();
+            const video = document.getElementById('videoPlayer');
+            document.getElementById('timestamp').value = now;
+            document.getElementById('buttonLabel').value = button.innerText;
+            document.getElementById('videoTime').value = video.currentTime;
+        }
+    </script>
+
+    <!-- Category Ratings Buttons -->
+    <form method="POST" action="/submit_final_ratings" class="category-ratings" id="finalRatingsForm">
+        <h3>Final Ratings</h3>
+        {% for category in ['Respect for Tissue', 'Hemostasis', 'Instrument Handling', 'Economy of Movement', 'Flow', 'Overall'] %}
+            <div class="category">
+                <div class="category-title">{{ category }}</div>
+                {% for rating in ['Excellent', 'Very Good', 'Good', 'Average', 'Below Average', 'Poor', 'Very Poor'] %}
+                    <button type="submit" name="{{ category|replace(' ', '_') }}" value="{{ rating }}" class="category-button" disabled>{{ rating }}</button>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </form>
+
+    <script>
+        const video = document.getElementById('videoPlayer');
+        const ratingButtons = document.querySelectorAll(".ratings button");
+        const ratingForm = document.getElementById("ratingForm");
+        const ratingTimeInput = document.getElementById("ratingTime");
+        const intervalDisplay = document.getElementById("intervalDisplay");
+        const countdownTimer = document.getElementById("countdown");
+
+        const categoryButtons = document.querySelectorAll(".category-button");
+
+        let segmentStart = 0;
+        const segmentDuration = 15;
+        let segmentEnd = segmentStart + segmentDuration;
+        let autoMode = true;
+
+        video.addEventListener("timeupdate", () => {
+            const timeLeft = Math.max(0, Math.ceil(video.duration - video.currentTime));
+            countdownTimer.textContent = timeLeft;
+
+            if (autoMode && video.currentTime >= segmentEnd) {
+                video.pause();
+                enableRatings();
+            }
+        });
+
+        video.addEventListener("ended", () => {
+            enableCategoryRatings();
+        });
+
+        function manualPlay() {
+            autoMode = false;
+            video.play();
+        }
+
+        function playSegment() {
+            autoMode = true;
+            segmentStart = video.currentTime;
+            segmentEnd = segmentStart + segmentDuration;
+            updateIntervalDisplay();
+            disableRatings();
+            video.play();
+        }
+
+        function pauseVideo() {
+            video.pause();
+        }
+
+        function replaySegment() {
+            video.currentTime = segmentStart;
+            disableRatings();
+            video.play();
+        }
+
+        function setSpeed(speed) {
+            video.playbackRate = speed;
+        }
+
+        function enableRatings() {
+            ratingButtons.forEach(btn => btn.disabled = false);
+        }
+
+        function disableRatings() {
+            ratingButtons.forEach(btn => btn.disabled = true);
+        }
+
+        function enableCategoryRatings() {
+            categoryButtons.forEach(btn => btn.disabled = false);
+        }
+
+        function updateIntervalDisplay() {
+            intervalDisplay.textContent = `${Math.floor(segmentStart)} - ${Math.floor(segmentEnd)}`;
+        }
+
+        ratingForm.addEventListener("click", function (e) {
+            if (e.target.name === "rating") {
+                e.preventDefault();
+                ratingTimeInput.value = Math.floor(segmentStart);
+                disableRatings();
+                playSegment();
+            }
+        });
+
+        // Start the first segment on load
+        window.onload = function () {
+            playSegment();
+        };
+    </script>
+</body>
+</html>

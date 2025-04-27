@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rate Video</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 40px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        .video-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        video {
+            border-radius: 8px;
+            border: 2px solid #333;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-width: 90%;
+        }
+
+        .controls, .ratings, .info-bar, .category-ratings {
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 8px 14px;
+            margin: 6px 4px;
+            font-size: 14px;
+            border-radius: 6px;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: background 0.3s ease;
+            cursor: pointer;
+        }
+
+        .controls button {
+            background-color: #f0f0f0;
+        }
+
+        .controls button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .ratings button {
+            background-color: #d3e0ea;
+        }
+
+        .ratings button:hover {
+            background-color: #a3c4dc;
+        }
+
+        .ratings button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .info-bar {
+            font-size: 18px;
+            font-weight: bold;
+            background-color: #eef5ff;
+            padding: 10px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-top: 5px;
+            margin-bottom: 15px;
+        }
+
+        .info-bar span {
+            color: #007bff;
+        }
+        
+        .rating-history {
+            margin-top: 20px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: left;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .rating-history h3 {
+            text-align: center;
+            margin-top: 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Surgical Video Rating</h2>
+
+    <div class="video-container">
+        <video id="videoPlayer" width="960" height="540" oncontextmenu="return false;" style="pointer-events: none;">
+            <source src="{{ url_for('static', filename=video_file) }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <div class="info-bar">
+        Rating Interval: <span id="intervalDisplay">105 - 120</span> seconds |
+        Time Left: <span id="countdown">1</span> seconds
+    </div>
+
+    <!-- Playback Controls -->
+    <div class="controls">
+        <button id="playButton">▶️ Play</button>
+        <button id="pauseButton">⏸️ Pause</button>
+        <button id="replayButton">🔄 Replay Last 15s</button>
+        <button id="speed1">▶️ 1x</button>
+        <button id="speed2">⏩ 2x</button>
+        <button id="speed4">⏩⏩ 4x</button>
+    </div>
+
+    <!-- Rating Buttons -->
+    <div class="ratings">
+        <form method="POST" action="/submit_rating" id="ratingForm">
+            <button type="button" class="rating-btn" data-value="Excellent" disabled>Excellent</button>
+            <button type="button" class="rating-btn" data-value="Very Good" disabled>Very Good</button>
+            <button type="button" class="rating-btn" data-value="Good" disabled>Good</button>
+            <button type="button" class="rating-btn" data-value="Average" disabled>Average</button>
+            <button type="button" class="rating-btn" data-value="Below Average" disabled>Below Average</button>
+            <button type="button" class="rating-btn" data-value="Poor" disabled>Poor</button>
+            <button type="button" class="rating-btn" data-value="Very Poor" disabled>Very Poor</button>
+            <input type="hidden" name="time" id="ratingTime">
+            <input type="hidden" name="timestamp" id="timestamp">
+            <input type="hidden" name="button_label" id="buttonLabel">
+        </form>
+    </div>
+    
+    <!-- Rating History -->
+    <div class="rating-history">
+        <h3>Your Ratings</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Interval</th>
+                    <th>Rating</th>
+                </tr>
+            </thead>
+            <tbody id="ratings-table">
+                <!-- Ratings will be added here -->
+            </tbody>
+        </table>
+    </div>
+
+<script>
+    // Get DOM elements
+    const video = document.getElementById("videoPlayer");
+    const ratingButtons = document.querySelectorAll(".rating-btn");
+    const ratingForm = document.getElementById("ratingForm");
+    const ratingTimeInput = document.getElementById("ratingTime");
+    const timestampInput = document.getElementById("timestamp");
+    const buttonLabelInput = document.getElementById("buttonLabel");
+    const intervalDisplay = document.getElementById("intervalDisplay");
+    const countdownTimer = document.getElementById("countdown");
+    const playButton = document.getElementById("playButton");
+    const pauseButton = document.getElementById("pauseButton");
+    const replayButton = document.getElementById("replayButton");
+    const speed1Button = document.getElementById("speed1");
+    const speed2Button = document.getElementById("speed2");
+    const speed4Button = document.getElementById("speed4");
+    const ratingsTable = document.getElementById("ratings-table");
+
+    // Define all rating time points (in seconds)
+    const ratingTimes = [15, 30, 45, 60, 75, 90, 105, 120];
+    let currentRatingIndex = 0;
+    let autoMode = true;
+    let lastTimeUpdate = 0;
+    let userRatings = {};
+    let ratingRowElements = {}; // Store references to rating row elements
+
+    // Initialize when video is ready
+    video.addEventListener('loadedmetadata', initialize);
+
+    function initialize() {
+        updateIntervalDisplay();
+        lastTimeUpdate = Date.now();
+        
+        // Start playing automatically when loaded
+        setTimeout(() => {
+            playToNextRatingPoint();
+        }, 500);
+    }
+
+    // Time update event to check for rating points
+    video.addEventListener("timeupdate", () => {
+        // Calculate time and update countdown
+        const currentTime = video.currentTime;
+        const timeLeft = Math.max(0, Math.ceil(video.duration - currentTime));
+        countdownTimer.textContent = timeLeft;
+
+        // Check if we've reached the next rating point
+        if (autoMode && currentRatingIndex < ratingTimes.length) {
+            const targetTime = ratingTimes[currentRatingIndex];
+            
+            // Check if we've reached or passed the target time
+            if (currentTime >= targetTime - 0.2) { // Small buffer for accuracy
+                // Pause exactly at the rating time
+                video.pause();
+                video.currentTime = targetTime;
+                enableRatings();
+                autoMode = false;
+            }
+        }
+    });
+
+    // Function to play video to the next rating point
+    function playToNextRatingPoint() {
+        if (currentRatingIndex >= ratingTimes.length) {
+            disableRatings()
+            alert("All rating points completed!");
+            return;
+        }
+
+        autoMode = true;
+        disableRatings();
+        
+        // Set video to appropriate start time
+        const startTime = currentRatingIndex > 0 ? ratingTimes[currentRatingIndex-1] : 0;
+        video.currentTime = startTime;
+        
+        updateIntervalDisplay();
+        video.play();
+    }
+
+    // Enable rating buttons
+    function enableRatings() {
+        ratingButtons.forEach(btn => btn.disabled = false);
+    }
+
+    // Disable rating buttons
+    function disableRatings() {
+        ratingButtons.forEach(btn => btn.disabled = true);
+    }
+
+    // Update interval display text
+    function updateIntervalDisplay() {
+        const start = currentRatingIndex > 0 ? ratingTimes[currentRatingIndex-1] : 0;
+        const end = ratingTimes[currentRatingIndex] || video.duration;
+        intervalDisplay.textContent = `${start} - ${end}`;
+    }
+
+    // Button event handlers
+    playButton.addEventListener("click", () => {
+        autoMode = false;
+        video.play();
+    });
+
+    pauseButton.addEventListener("click", () => {
+        video.pause();
+    });
+
+    replayButton.addEventListener("click", () => {
+        if (currentRatingIndex > 0) {
+            autoMode = true;
+            currentRatingIndex--;
+            playToNextRatingPoint();
+        }
+    });
+
+    speed1Button.addEventListener("click", () => {
+        video.playbackRate = 1;
+    });
+
+    speed2Button.addEventListener("click", () => {
+        video.playbackRate = 2;
+    });
+
+    speed4Button.addEventListener("click", () => {
+        video.playbackRate = 4;
+    });
+
+    // Handle rating button clicks
+    ratingButtons.forEach(button => {
+        button.addEventListener("click", function() {
+            const rating = this.getAttribute("data-value");
+            const segmentStart = currentRatingIndex > 0 ? ratingTimes[currentRatingIndex-1] : 0;
+            const segmentEnd = ratingTimes[currentRatingIndex];
+            const intervalKey = `${segmentStart}-${segmentEnd}`;
+            
+            // Set form values
+            ratingTimeInput.value = segmentStart;
+            timestampInput.value = new Date().toISOString();
+            buttonLabelInput.value = rating;
+            
+            // Store the rating
+            userRatings[currentRatingIndex] = rating;
+            
+            // Check if we already have a row for this interval
+            if (ratingRowElements[intervalKey]) {
+                // Update existing row
+                ratingRowElements[intervalKey].cells[1].textContent = rating;
+            } else {
+                // Create new row
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${segmentStart} - ${segmentEnd} seconds</td>
+                    <td>${rating}</td>
+                `;
+                ratingsTable.appendChild(row);
+                
+                // Store reference to the row
+                ratingRowElements[intervalKey] = row;
+            }
+            
+            // Submit the form
+            const formData = new FormData(ratingForm);
+            
+            fetch('/submit_rating', {
+                method: 'POST',
+                body: formData
+            }).then(response => {
+                if (response.ok) {
+                    // Advance to next rating point
+                    currentRatingIndex++;
+                    playToNextRatingPoint();
+                } else {
+                    alert("Error submitting rating. Please try again.");
+                }
+            }).catch(error => {
+                console.error("Error:", error);
+                alert("Error submitting rating. Please try again.");
+            });
+        });
+    });
+
+    // Handle video end
+    video.addEventListener("ended", () => {
+        if (currentRatingIndex < ratingTimes.length) {
+            enableRatings();
+        } else {
+            disableRatings()
+            alert("Video ended. All ratings complete!");
+        }
+    });
+</script>
+</body>
+</html>
