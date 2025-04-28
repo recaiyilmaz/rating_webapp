@@ -1,21 +1,21 @@
-id,name,folder_name,where_we_left,15,30,45,60,75,90,105,120,Respect for Tissue,Hemostasis,Instrument Handling,Economy of Movement,Flow,Overall,Date of Rating
-1dkDE0PqtrOjbBDKLWsRVogo38utw0vUl,cut_VID_20220105_13.42.41.mp4_8114.mp4,02010513-2,6,,,,,,,,,,,,,,,
+id,name,folder_name,where_we_left,0-15,15-30,30-45,45-60,60-75,75-90,90-105,105-120,Respect for Tissue,Hemostasis,Instrument Handling,Economy of Movement,Flow,Overall,Date of Rating
+1dkDE0PqtrOjbBDKLWsRVogo38utw0vUl,cut_VID_20220105_13.42.41.mp4_8114.mp4,02010513-2,17.0,,,,,,,,,,,,,,,
 1fgW4_o5bH38HsjsqCCq-GPQXY3caYP6H,cut_VID_20220106_10.18.46.mp4_1064.mp4,03010609-1,,,,,,,,,,,,,,,,
 1hcwAVJzpLvdCzadsBlF1MlimNMqu_hPy,cut_VID_20220106_13.35.47.mp4_4242.mp4,04010613-2,,,,,,,,,,,,,,,,
 1lePgE6m7fx7QMWupdWG8j7VqvF5lbkxl,cut_VID_20220107_15.31.48.mp4_8016.mp4,07010715-2,,,,,,,,,,,,,,,,
 1QCzfdxXr3pDJkIijlHun8BBtwS7fMhyl,cut_VID_20220108_11.44.39.mp4_8320.mp4,10010811-2,,,,,,,,,,,,,,,,
 1k2OH65yjTIwi_McQYu9peQosI6rVla6i,cut_VID_20220108_16.20.55.mp4_12758.mp4,11010815-1,,,,,,,,,,,,,,,,
 1kTqn502RWUXC0MtWOoGS53LkbP9pGL-m,cut_VID_20220108_17.23.12.mp4_6936.mp4,12010817-2,,,,,,,,,,,,,,,,
-1pn2C15YWQeiCXgZM0XKuPKfEb4Ooey2k,cut_VID_20220112_16.14.32.mp4_11012.mp4,25011215-2,,,,,,,,,,,,,,,,
-1nfYSqCd5OvsGZamdkUK2cvVCHV-PJ7KQ,cut_VID_20220113_19.18.38_2nd_trial.mp4_3866.mp4,29011319-3,,,,,,,,,,,,,,,,
-1SHrdXTmvzBcbfCok8PcqLrdzd9dGvvld,cut_VID_20220115_14.22.48.mp4_2520.mp4,33011513-2,,,,,,,,,,,,,,,,
-1uBuCW8pBoOj4JLlwz1izv5u58Ul5cd7B,cut_VID_20220116_15.18.33_3rd_trial.mp4_3800.mp4,37011615-3,,,,,,,,,,,,,,,,
-18GVgk2sZtlNpxF8aG9GuoEYApmcRcEcC,cut_VID_20220120_14.01.30.mp4_4610.mp4,41012013-2,,,,,,,,,,,,,,,,
-11t3YW_tqyXM7ByqzjCREgnNiqksLCH6_,cut_VID_20220122_15.06.11_2nd_trial.mp4_7454.mp4,46012215-3,,,,,,,,,,,,,,,,
-16zjt5Zs9q3jwBgUpZ2FDSYI2dfwXeZuf,cut_VID_20220201_13.31.11.mp4_7830.mp4,55020113-2,,,,,,,,,,,,,,,,
-18XGxHxRP5JOG2GbHsPXapNlOBZYa4bCp,cut_VID_20220203_16.23.35.mp4_1194.mp4,56020315-2,,,,,,,,,,,,,,,,
-1hjyT0IGRNoghqBLg_oPtTR-qHZkvxz8J,cut_VID_20220210_20.12.30.mp4_8108.mp4,60021019-3,,,,,,,,,,,,,,,,
-1KD1SmeNk2fqNfzZcVoYhtL5GX8F82Z9F,cut_VID_20220222_11.13.15.mp4_12358.mp4,73022211-1,,,,,,,,,,,,,,,,
+1pn2C15YWQeiCXgZM0XKuPKfEb4Ooey2k,cut_VID_20220112_16.14.32.mp4_11012.mp4,25011215-2,,Very Good,Below Average,Poor,Below Average,Average,Very Poor,Below Average,Below Average,Good,Poor,Average,Below Average,Average,Average,2025-04-28 15:20:45
+1nfYSqCd5OvsGZamdkUK2cvVCHV-PJ7KQ,cut_VID_20220113_19.18.38_2nd_trial.mp4_3866.mp4,29011319-3,,Very Poor,Below Average,Poor,Poor,Below Average,Below Average,Below Average,Poor,Average,Below Average,Below Average,Good,Excellent,Excellent,2025-04-28 16:07:36
+1SHrdXTmvzBcbfCok8PcqLrdzd9dGvvld,cut_VID_20220115_14.22.48.mp4_2520.mp4,33011513-2,,Poor,Below Average,Below Average,Poor,Very Good,Excellent,Excellent,Excellent,Very Good,Very Good,Good,Excellent,Excellent,Excellent,2025-04-28 17:01:20
+1uBuCW8pBoOj4JLlwz1izv5u58Ul5cd7B,cut_VID_20220116_15.18.33_3rd_trial.mp4_3800.mp4,37011615-3,,Below Average,Poor,Below Average,Poor,Average,Below Average,Poor,Below Average,Good,Below Average,Below Average,Good,Good,Very Good,2025-04-28 18:37:22
+18GVgk2sZtlNpxF8aG9GuoEYApmcRcEcC,cut_VID_20220120_14.01.30.mp4_4610.mp4,41012013-2,,Below Average,Poor,Below Average,Very Poor,Average,Below Average,Average,Average,Very Good,Good,Excellent,Excellent,Very Good,Excellent,2025-04-28 18:52:03
+11t3YW_tqyXM7ByqzjCREgnNiqksLCH6_,cut_VID_20220122_15.06.11_2nd_trial.mp4_7454.mp4,46012215-3,,Good,Below Average,Average,Below Average,,,,,Very Good,Good,Below Average,Below Average,Poor,Below Average,2025-04-28 19:02:30
+16zjt5Zs9q3jwBgUpZ2FDSYI2dfwXeZuf,cut_VID_20220201_13.31.11.mp4_7830.mp4,55020113-2,,Good,Poor,Below Average,Below Average,,,,,Poor,Below Average,Poor,Below Average,Average,Below Average,2025-04-28 19:03:49
+18XGxHxRP5JOG2GbHsPXapNlOBZYa4bCp,cut_VID_20220203_16.23.35.mp4_1194.mp4,56020315-2,,Below Average,Poor,Very Poor,Below Average,Average,Good,Below Average,Below Average,Below Average,Good,Below Average,Poor,Below Average,Below Average,2025-04-28 19:18:59
+1hjyT0IGRNoghqBLg_oPtTR-qHZkvxz8J,cut_VID_20220210_20.12.30.mp4_8108.mp4,60021019-3,,Poor,Very Poor,Poor,Very Poor,Very Poor,Poor,Below Average,Poor,Poor,Very Poor,Below Average,Poor,Below Average,Poor,2025-04-28 19:47:43
+1KD1SmeNk2fqNfzZcVoYhtL5GX8F82Z9F,cut_VID_20220222_11.13.15.mp4_12358.mp4,73022211-1,,Below Average,Poor,Poor,Very Poor,,,,,Very Poor,Very Poor,Very Poor,Below Average,Below Average,Poor,2025-04-28 19:48:33
 1GrImnOk9oZxJAPRBUOb2wySNzYyRYjo3,cut_VID_20220222_14.26.52.mp4_11944.mp4,74022213-2,,,,,,,,,,,,,,,,
 1c5Mv_Ziu3LiDJHxY_YDrGI6jH-2DOlqV,cut_VID_20220222_15.28.08.mp4_1288.mp4,75022215-2,,,,,,,,,,,,,,,,
 1yWvG2P69-Len6NSEcWAXtUL7mbZWtq_N,cut_VID_20220307_10.52.26.mp4_18276.mp4,92030709-1,,,,,,,,,,,,,,,,

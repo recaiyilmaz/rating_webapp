@@ -1,15 +1,17 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, Response
 from googleapiclient.http import MediaIoBaseDownload
 import pandas as pd
 import os, io, csv
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from google.oauth2 import service_account
-import requests
-import json
+import requests, glob
+import json, random
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
+
 
 # -----------------------------
 # SET YOUR USERS AND FOLDERS
@@ -52,6 +54,9 @@ credentials_json = json.dumps(credentials_dict)
 credentials = service_account.Credentials.from_service_account_info(json.loads(credentials_json))
 # Create the service client
 drive_service = build('drive', 'v3', credentials=credentials)
+
+# Session variable to store interval ratings between requests
+interval_ratings = {}
 
 
 # -----------------------------
@@ -99,21 +104,132 @@ def rate_video():
         return "All videos have been rated!"
 
     video_id = df['id'].iloc[index]
-    video_path = f'static/current_video.mp4'
+    random_id = random.randint(1000, 9999)
+    video_path = f'static/current_video{random_id}.mp4'
     download_file_from_drive(video_id, video_path)
+    print(f'This is the video we work on {video_id}')
 
     return render_template('rate.html', video_file=video_path.split('static/')[1])
 
+
 # -----------------------------
-# SAVE RATING
+# SAVE INTERVAL RATINGS
 # -----------------------------
 @app.route('/submit_ratings', methods=['POST'])
 def submit_ratings():
-    # Get the ratings data from the form
-    ratings = request.form.get('all_ratings')
-    print(ratings)
+    if 'user' not in session:
+        return redirect(url_for('login'))
 
-    return "All ratings saved successfully!"
+    user = session['user']
+
+    # Get the ratings data from the form
+    ratings_json = request.form.get('all_ratings')
+    ratings_data = json.loads(ratings_json)
+
+    # Store in session for later use with category ratings
+    # Convert to a format that can be stored in session
+    session['interval_ratings'] = ratings_json
+
+    # Return empty 204 response
+    return Response(status=204)
+
+
+# -----------------------------
+# SAVE CATEGORY RATINGS AND UPDATE CSV
+# -----------------------------
+@app.route('/submit_category_ratings', methods=['POST'])
+def submit_category_ratings():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+
+    user = session['user']
+    folder_id = rater_drive_folders[user]
+
+    # Retrieve interval ratings from session
+    if 'interval_ratings' not in session:
+        return "Error: Interval ratings not found. Please rate the intervals first."
+
+    interval_ratings_json = session['interval_ratings']
+    interval_ratings = json.loads(interval_ratings_json)
+
+    # Get the category ratings data from the form
+    category_ratings_json = request.form.get('category_ratings')
+    category_data = json.loads(category_ratings_json)
+    category_ratings = category_data['categoryRatings']
+
+    # Find and download CSV file
+    csv_file = find_csv_file_in_drive(folder_id)
+    if not csv_file:
+        return f"Error: No CSV found for user: {user}"
+
+    csv_path = f'static/{user}_RaterFile.csv'  # already downloaded above
+
+    # Read the CSV
+    df = pd.read_csv(csv_path)
+
+    # Get current video index and ID
+    current_index = int(df['where_we_left'].iloc[0])
+    print(f'This is what\'s been read: {current_index}')
+
+    # Update interval ratings in CSV
+    # Map the interval keys to column names
+    interval_mapping = {
+        '0-15': '0-15',
+        '15-30': '15-30',
+        '30-45': '30-45',
+        '45-60': '45-60',
+        '60-75': '60-75',
+        '75-90': '75-90',
+        '90-105': '90-105',
+        '105-120': '105-120'
+    }
+
+    # Update interval ratings in the CSV
+    for interval_key, rating_data in interval_ratings.items():
+        col_name = interval_mapping.get(interval_key)
+        if col_name and col_name in df.columns:
+            df.at[current_index, col_name] = rating_data['rating']
+
+    # Update category ratings in CSV
+    category_mapping = {
+        'RespectForTissue': 'Respect for Tissue',
+        'Hemostasis': 'Hemostasis',
+        'InstrumentHandling': 'Instrument Handling',
+        'EconomyOfMovement': 'Economy of Movement',
+        'Flow': 'Flow',
+        'Overall': 'Overall'
+    }
+
+    for category_key, category_name in category_mapping.items():
+        if category_key in category_ratings and category_name in df.columns:
+            df.at[current_index, category_name] = category_ratings[category_key]
+
+    # Update date of rating
+    if 'Date of Rating' in df.columns:
+        df.at[current_index, 'Date of Rating'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    # Update the progress counter
+    df.at[0, 'where_we_left'] = current_index + 1
+    print(f'This is what it is after the update: {df.at[0, 'where_we_left']}')
+
+    # Save updated CSV
+    df.to_csv(csv_path, index=False)
+
+    # Upload updated CSV back to Google Drive
+    update_csv_in_drive(csv_path, csv_file['id'])
+
+    # Clear the session ratings
+    if 'interval_ratings' in session:
+        session.pop('interval_ratings')
+
+    mp4_files = glob.glob(os.path.join('static', "current_video*"))
+    for file_path in mp4_files:
+        os.remove(file_path)
+        print(f"Deleted: {file_path}")
+
+    # Redirect to the next video
+    return redirect(url_for('rate_video'))
+
 
 # -----------------------------
 # DOWNLOAD FILE FROM DRIVE
@@ -126,6 +242,20 @@ def download_file_from_drive(file_id, dest_path):
     while done is False:
         status, done = downloader.next_chunk()
 
+
+# -----------------------------
+# UPDATE CSV IN DRIVE
+# -----------------------------
+def update_csv_in_drive(csv_path, file_id):
+    media = MediaFileUpload(csv_path, mimetype='text/csv')
+    file = drive_service.files().update(
+        fileId=file_id,
+        media_body=media
+    ).execute()
+
+    return file.get('id')
+
+
 # -----------------------------
 # FIND CSV FILE IN DRIVE FOLDER
 # -----------------------------
@@ -137,6 +267,7 @@ def find_csv_file_in_drive(folder_id):
         if file['name'] == 'RaterFile.csv':
             return file
     return None
+
 
 if __name__ == '__main__':
     app.run(debug=True)
