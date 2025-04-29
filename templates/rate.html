@@ -7,18 +7,19 @@
             font-family: 'Segoe UI', sans-serif;
             background-color: #f4f4f4;
             text-align: center;
-            padding: 40px;
+            padding: 5px;
         }
 
         h2 {
-            margin-bottom: 20px;
+            font-size: 20px;
+            margin-bottom: 15px;
         }
 
         .video-section {
             position: relative;
             display: flex;
             justify-content: center;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         .video-container {
@@ -93,7 +94,7 @@
         }
 
         .controls, .ratings, .info-bar, .category-ratings {
-            margin-top: 20px;
+            margin-top: 12px;
         }
 
         button {
@@ -136,7 +137,7 @@
             border-radius: 6px;
             display: inline-block;
             margin-top: 5px;
-            margin-bottom: 10px;
+            margin-bottom: 1px;
         }
 
         .info-bar span {
@@ -242,7 +243,19 @@
     </style>
 </head>
 <body>
+    <div style="display: flex; align-items: center; margin-bottom: 10px; margin-top: 10px;">
 
+    <!-- Progress Bar -->
+    <div style="width: 200px; height: 10px; background-color: #e0e0e0; border-radius: 5px; overflow: hidden; margin-right: 10px;">
+        <div style="height: 100%; background-color: #4caf50; width: {{ (rated_videos / total_videos) * 100 }}%;"></div>
+    </div>
+
+    <!-- Progress Text -->
+    <div style="font-size: 14px;">
+        {{ rated_videos }} / {{ total_videos }} videos rated
+    </div>
+
+</div>
     <h2>Surgical Video Rating</h2>
 
     <div class="video-section">
@@ -677,22 +690,11 @@
             // Enable submit button if all segments have been rated
             const allSegmentsRated = Object.keys(userRatings).length === ratingTimes.length;
             submitAllButton.disabled = !allSegmentsRated;
-            
-            if (allSegmentsRated) {
-                alert("Video ended. All ratings complete! Please review and submit.");
-            } else {
-                alert("Video ended. Please complete all ratings before submitting.");
-            }
         }
     });
 
     // Submit all ratings button
     submitAllButton.addEventListener("click", function() {
-        // Check if we have all ratings
-        if (Object.keys(userRatings).length < ratingTimes.length) {
-            alert("Please provide ratings for all segments before submitting.");
-            return;
-        }
 
         // Prepare the data for submission
         allRatingsInput.value = JSON.stringify(userRatings);
@@ -787,12 +789,7 @@
         ];
         
         const allRated = allCategories.every(category => categoryRatings[category]);
-        
-        if (!allRated) {
-            alert("Please rate all six categories before submitting.");
-            return;
-        }
-        
+                
         // Add timestamp to category ratings
         const submissionData = {
             categoryRatings: categoryRatings,
@@ -807,7 +804,6 @@
 
         // Disable button and show confirmation
         submitCategoryButton.disabled = true;
-        alert("Thank you! Your ratings have been submitted successfully.");
     });
 </script>
 </body>

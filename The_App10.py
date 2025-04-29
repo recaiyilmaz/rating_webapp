@@ -100,16 +100,24 @@ def rate_video():
         return "CSV file must have 'id' and 'where_we_left' columns"
 
     index = int(df['where_we_left'].iloc[0])
-    if index >= len(df):
+
+    total_videos = len(df)
+    rated_videos = index
+    videos_left = total_videos - rated_videos
+
+    if index >= total_videos:
         return "All videos have been rated!"
 
     video_id = df['id'].iloc[index]
-    random_id = random.randint(1000, 9999)
+    random_id = random.randint(10000, 99999)
     video_path = f'static/current_video{random_id}.mp4'
     download_file_from_drive(video_id, video_path)
     print(f'This is the video we work on {video_id}')
 
-    return render_template('rate.html', video_file=video_path.split('static/')[1])
+    return render_template(
+        'rate.html', video_file=video_path.split('static/')[1],
+        rated_videos=rated_videos, total_videos=total_videos, videos_left=videos_left
+    )
 
 
 # -----------------------------
@@ -169,7 +177,6 @@ def submit_category_ratings():
 
     # Get current video index and ID
     current_index = int(df['where_we_left'].iloc[0])
-    print(f'This is what\'s been read: {current_index}')
 
     # Update interval ratings in CSV
     # Map the interval keys to column names
@@ -210,7 +217,6 @@ def submit_category_ratings():
 
     # Update the progress counter
     df.at[0, 'where_we_left'] = current_index + 1
-    print(f'This is what it is after the update: {df.at[0, 'where_we_left']}')
 
     # Save updated CSV
     df.to_csv(csv_path, index=False)
