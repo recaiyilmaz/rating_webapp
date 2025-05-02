@@ -14,7 +14,60 @@
             font-size: 20px;
             margin-bottom: 15px;
         }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background: #ccc;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+            font-weight: bold;
+            cursor: help;
+            margin-left: 15px;   /* Add space to the left */
+            margin-right: 15px;  /* Add space to the right */
+        }
 
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            background-color: #2c2c2c;
+            color: #fff;
+            text-align: left;
+            border-radius: 6px;
+            padding: 12px 15px;
+            position: absolute;
+            z-index: 1;
+            width: 470px;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -250px;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            transform: translateY(10px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-weight: normal;
+            font-size: 0.9rem;
+        }
+        
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -8px;
+            border-width: 8px;
+            border-style: solid;
+            border-color: #2c2c2c transparent transparent transparent;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
         .video-section {
             position: relative;
             display: flex;
@@ -195,7 +248,7 @@
         }
 
         .category-section {
-            margin-top: 30px;
+            margin-top: 150px;
             max-width: 800px;
             margin-left: auto;
             margin-right: auto;
@@ -293,6 +346,16 @@
 
     <!-- Rating Buttons -->
     <div class="ratings">
+        <span class="tooltip">?
+            <span class="tooltiptext"> <strong>Excellent</strong> means:<br>
+                • Coordinated, skillful use of both instruments together.<br>
+                • Purposeful, deliberate movements without unnecessary motion.<br>
+                • Consistent respect for normal tissue and anatomical landmarks.<br>
+                • Efficient tumor removal with minimal disruption.<br>
+                • Avoiding bleeding or promptly and effectively cauterizing when needed.<br>
+                • Maintaining a clear visualization of the surgical field.<br>
+            </span>
+        </span>
         <button type="button" class="rating-btn" data-value="Excellent" disabled>Excellent</button>
         <button type="button" class="rating-btn" data-value="Very Good" disabled>Very Good</button>
         <button type="button" class="rating-btn" data-value="Good" disabled>Good</button>
@@ -300,6 +363,16 @@
         <button type="button" class="rating-btn" data-value="Below Average" disabled>Below Average</button>
         <button type="button" class="rating-btn" data-value="Poor" disabled>Poor</button>
         <button type="button" class="rating-btn" data-value="Very Poor" disabled>Very Poor</button>
+        <span class="tooltip">?
+            <span class="tooltiptext"> <strong>Very Poor</strong> means:<br>
+            • Reliance on a single instrument with poor bimanual coordination.<br>
+            • Frequent use of excessive or uncontrolled force.<br>
+            • Significant and unnecessary damage to surrounding healthy tissue.<br>
+            • Inadequate exposure and poor visualization of the surgical field.<br>
+            • Persistent bleeding with poor or no attempts at effective hemostasis.<br>
+            • Disorganized, hesitant, or erratic movements.<br>
+            </span>
+        </span>
     </div>
     
     <!-- Rating History -->
@@ -330,6 +403,14 @@
         <div class="category-row">
             <div class="category-label">Respect for Tissue</div>
             <div class="category-rating-buttons" data-category="RespectForTissue">
+                <span class="tooltip">?
+                    <span class="tooltiptext"> <strong>Excellent Respect for Tissue</strong> means:<br>
+                        • Precise and delicate handling of tissues at all times.<br>
+                        • No unnecessary trauma or tearing.<br>
+                        • Using minimal forces necessary.<br>
+                        • Respecting normal tissue margins and anatomical landmarks.<br>
+                    </span>
+                </span>
                 <button type="button" class="category-btn" data-value="Excellent">Excellent</button>
                 <button type="button" class="category-btn" data-value="Very Good">Very Good</button>
                 <button type="button" class="category-btn" data-value="Good">Good</button>
@@ -337,6 +418,14 @@
                 <button type="button" class="category-btn" data-value="Below Average">Below Average</button>
                 <button type="button" class="category-btn" data-value="Poor">Poor</button>
                 <button type="button" class="category-btn" data-value="Very Poor">Very Poor</button>
+                <span class="tooltip">?
+                    <span class="tooltiptext"> <strong>Very Poor Respect for Tissue</strong> means:<br>
+                        • Frequent and careless handling of tissues.<br>
+                        • Rough, uncontrolled movements causing trauma.<br>
+                        • Excessive use of force.<br>
+                        • Repeated damage to healthy or adjacent tissue.<br>
+                    </span>
+                </span>
             </div>
         </div>
         
@@ -344,6 +433,15 @@
         <div class="category-row">
             <div class="category-label">Hemostasis</div>
             <div class="category-rating-buttons" data-category="Hemostasis">
+                <span class="tooltip">?
+                    <span class="tooltiptext">
+                        <strong>Excellent Hemostasis</strong> means:<br>
+                        • Prompt and consistent control of bleeding throughout the procedure.<br>
+                        • Appropriate hemostatic techniques with minimal tissue disruption.<br>
+                        • Forward planning to avoid bleeding complications.<br>
+                        • Surgical field remains clear, aiding visibility and precision.<br>
+                    </span>
+                </span>
                 <button type="button" class="category-btn" data-value="Excellent">Excellent</button>
                 <button type="button" class="category-btn" data-value="Very Good">Very Good</button>
                 <button type="button" class="category-btn" data-value="Good">Good</button>
@@ -351,6 +449,15 @@
                 <button type="button" class="category-btn" data-value="Below Average">Below Average</button>
                 <button type="button" class="category-btn" data-value="Poor">Poor</button>
                 <button type="button" class="category-btn" data-value="Very Poor">Very Poor</button>
+                <span class="tooltip">?
+                    <span class="tooltiptext">
+                        <strong>Very Poor Hemostasis</strong> means:<br>
+                        • Frequent, uncontrolled bleeding obscuring the surgical field.<br>
+                        • Delayed or ineffective response to bleeding events.<br>
+                        • Inappropriate and excessive cauterization causing further trauma.<br>
+                        • Interfering with visibility, increasing risk of errors and prolonging the procedure.<br>
+                    </span>
+                </span>
             </div>
         </div>
         
@@ -358,6 +465,15 @@
         <div class="category-row">
             <div class="category-label">Instrument Handling</div>
             <div class="category-rating-buttons" data-category="InstrumentHandling">
+                <span class="tooltip">?
+                    <span class="tooltiptext">
+                        <strong>Excellent Instrument Handling</strong> means:<br>
+                        • Using both instruments efficiently together.<br>
+                        • Confident, purposeful use of instruments.<br>
+                        • Maintaining stable and precise actions.<br>
+                        • Minimizing unnecessary adjustments or re-grasps.<br>
+                    </span>
+                </span>
                 <button type="button" class="category-btn" data-value="Excellent">Excellent</button>
                 <button type="button" class="category-btn" data-value="Very Good">Very Good</button>
                 <button type="button" class="category-btn" data-value="Good">Good</button>
@@ -365,6 +481,15 @@
                 <button type="button" class="category-btn" data-value="Below Average">Below Average</button>
                 <button type="button" class="category-btn" data-value="Poor">Poor</button>
                 <button type="button" class="category-btn" data-value="Very Poor">Very Poor</button>
+                <span class="tooltip">?
+                    <span class="tooltiptext">
+                        <strong>Very Poor Instrument Handling</strong> means:<br>
+                        • Using only one instrument or not using bipolar efficiently.<br>
+                        • Unsteady, erratic, or uncontrolled instrument use.<br>
+                        • Frequent dropping, fumbling, or misalignment.<br>
+                        • Inappropriate tool positioning that blocks the view or increases unnecessary contact.<br>
+                    </span>
+                </span>
             </div>
         </div>
         
@@ -372,6 +497,15 @@
         <div class="category-row">
             <div class="category-label">Economy of Movement</div>
             <div class="category-rating-buttons" data-category="EconomyOfMovement">
+                <span class="tooltip">?
+                    <span class="tooltiptext">
+                        <strong>Excellent Economy of Movement</strong> means:<br>
+                        • Using only necessary movements with high efficiency.<br>
+                        • Avoiding redundancy or hesitation.<br>
+                        • Smooth transitions between regions of the tumor and tasks.<br>
+                        • Maximizing precision that minimizes fatigue.<br>
+                    </span>
+                </span>
                 <button type="button" class="category-btn" data-value="Excellent">Excellent</button>
                 <button type="button" class="category-btn" data-value="Very Good">Very Good</button>
                 <button type="button" class="category-btn" data-value="Good">Good</button>
@@ -379,6 +513,15 @@
                 <button type="button" class="category-btn" data-value="Below Average">Below Average</button>
                 <button type="button" class="category-btn" data-value="Poor">Poor</button>
                 <button type="button" class="category-btn" data-value="Very Poor">Very Poor</button>
+                <span class="tooltip">?
+                    <span class="tooltiptext">
+                        <strong>Very Poor Economy of Movement</strong> means:<br>
+                        • Excessive, unnecessary, or repetitive movements.<br>
+                        • Inefficient, jerky, aimless instrument usage.<br>
+                        • Spending most of the time moving instruments outside the tumoral region.<br>
+                        • Excessively rapid or slow movements.<br>
+                    </span>
+                </span>
             </div>
         </div>
         
@@ -386,6 +529,15 @@
         <div class="category-row">
             <div class="category-label">Flow</div>
             <div class="category-rating-buttons" data-category="Flow">
+                <span class="tooltip">?
+                    <span class="tooltiptext">
+                        <strong>Excellent Flow of Operation</strong> means:<br>
+                        • Logical, systematic progression through the procedure.<br>
+                        • Anticipating next steps with no interruptions.<br>
+                        • Transitions are smooth and well-coordinated.<br>
+                        • Strong mental mapping of the surgical plan.<br>
+                    </span>
+                </span>
                 <button type="button" class="category-btn" data-value="Excellent">Excellent</button>
                 <button type="button" class="category-btn" data-value="Very Good">Very Good</button>
                 <button type="button" class="category-btn" data-value="Good">Good</button>
@@ -393,6 +545,15 @@
                 <button type="button" class="category-btn" data-value="Below Average">Below Average</button>
                 <button type="button" class="category-btn" data-value="Poor">Poor</button>
                 <button type="button" class="category-btn" data-value="Very Poor">Very Poor</button>
+                <span class="tooltip">?
+                    <span class="tooltiptext">
+                        <strong>Very Poor Flow of Operation</strong> means:<br>
+                        • Frequent stops, starts, or confusion during the procedure.<br>
+                        • Poor anticipation of next steps, too much idle time.<br>
+                        • Disorganized or disjointed approach.<br>
+                        • Fixating on one part of the tumor.<br>
+                    </span>
+                </span>
             </div>
         </div>
         
@@ -400,6 +561,15 @@
         <div class="category-row">
             <div class="category-label">Overall</div>
             <div class="category-rating-buttons" data-category="Overall">
+                <span class="tooltip">?
+                    <span class="tooltiptext">
+                        <strong>Excellent Overall Performance</strong> means:<br>
+                        • Demonstrating mastery of surgical skills and confidence.<br>
+                        • Performing efficiently and effectively throughout.<br>
+                        • Maintaining safety and precision at all times.<br>
+                        • Reflecting high-level competency.<br>
+                    </span>
+                </span>
                 <button type="button" class="category-btn" data-value="Excellent">Excellent</button>
                 <button type="button" class="category-btn" data-value="Very Good">Very Good</button>
                 <button type="button" class="category-btn" data-value="Good">Good</button>
@@ -407,6 +577,15 @@
                 <button type="button" class="category-btn" data-value="Below Average">Below Average</button>
                 <button type="button" class="category-btn" data-value="Poor">Poor</button>
                 <button type="button" class="category-btn" data-value="Very Poor">Very Poor</button>
+                <span class="tooltip">?
+                    <span class="tooltiptext">
+                        <strong>Very Poor Overall Performance</strong> means:<br>
+                        • Displaying unsafe or unskilled behavior.<br>
+                        • Being disorganized, slow, or confused throughout.<br>
+                        • Compromising safety and quality of care.<br>
+                        • Reflecting poor competency.<br>
+                    </span>
+                </span>
             </div>
         </div>
         
@@ -610,8 +789,8 @@
 
     // Button event handlers
     playButton.addEventListener("click", () => {
-        autoMode = false;
-        video.play();
+        autoMode = true;
+        playToNextRatingPoint();
     });
 
     pauseButton.addEventListener("click", () => {
