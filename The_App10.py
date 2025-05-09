@@ -22,7 +22,7 @@ rater_credentials = {
     'DONOHO': 'DONOHO',
     'BAKHAIDAR': 'BAKHAIDAR',
     'ALSAYEGH': 'ALSAYEGH',
-    'OBRIEN': 'OBRIEN',
+    'LAU': 'LAU',
     'KHAN': 'KHAN',
     'ALHANTOOBI': 'ALHANTOOBI',
     'ALMANSOURI': 'ALMANSOURI',
